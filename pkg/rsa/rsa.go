@@ -6,14 +6,21 @@ import (
 	"math/big"
 )
 
-func Enctrypt(plaintext string, e, n *big.Int) (ciphertext *big.Int, err error) {
+func Enctrypt() {
 	// do something
-	return nil, nil
+
 }
 
 func Decrypt() {
 	// do something
 }
+
+/*
+ * Generate RSA key pair
+ e - public key (1 < e < φ(n) and gcd(e, φ(n)) = 1)
+ d - private key (d = e^-1 mod φ(n))
+ n - e * d
+*/
 
 func generateRSAKeyPair(bits int) (e, d, n *big.Int, err error) {
 	// do something
@@ -25,4 +32,10 @@ func generateRSAKeyPair(bits int) (e, d, n *big.Int, err error) {
 	fmt.Println(p)
 
 	return nil, nil, nil, nil
+}
+
+// find out extended gcd
+func extendedGCD(a, eulerN *big.Int) (x, y *big.Int) {
+	// do something
+	return nil, nil
 }
