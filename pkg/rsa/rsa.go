@@ -15,27 +15,32 @@ func Decrypt() {
 	// do something
 }
 
-/*
- * Generate RSA key pair
- e - public key (1 < e < φ(n) and gcd(e, φ(n)) = 1)
- d - private key (d = e^-1 mod φ(n))
- n - e * d
+/**
+1. Choose two very large prime numbers p and q
+   - how big should p and q be?
+	- p and q should be of similar bit-length (e.g., 2048 bits)
+	- n = p * q, so n will be of 2 * bit-length (e.g., 4096 bits)
+2. Calculate phi(n) = (p-1)(q-1)
+	- why phi(n) is important?
+	- because any number x raised to the power of phi(n) and then mod n will be 1 (x^phi(n) mod n = 1)
+	- it will allow use to derive the inverse of e
+3. Choose an integer e such that 1 < e < phi(n) and gcd(e, phi(n)) = 1
+	- why gcd(e, phi(n)) = 1?:w
+	- because e and phi(n) should be coprime
+	- e is the public exponent
+	- e is usually 3, 5, 17 or 65537
+4. Calculate d such that d * e mod phi(n) = 1
+	- d is the private exponent
+
 */
 
-func generateRSAKeyPair(bits int) (e, d, n *big.Int, err error) {
-	// do something
-	p, err := rand.Prime(rand.Reader, bits/2)
+// GeneratePrimeNumber generates a prime number of bits length
+func GeneratePrimeNumber(bits int) (n *big.Int) {
+	n, err := rand.Prime(rand.Reader, bits/2)
 	if err != nil {
-		return nil, nil, nil, err
+		fmt.Println(err)
+		return
 	}
 
-	fmt.Println(p)
-
-	return nil, nil, nil, nil
-}
-
-// find out extended gcd
-func extendedGCD(a, eulerN *big.Int) (x, y *big.Int) {
-	// do something
-	return nil, nil
+	return n
 }
