@@ -4,13 +4,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { API_URL } from "@/config/consts";
 import { useState } from "react";
 
-async function Encryption(text: string, key: string) {
-    const response = await fetch(API_URL + "/multiplicative/encrypt", {
+async function Encryption(text: string, key1: string, key2: string) {
+    const response = await fetch(API_URL + "/affine/encrypt", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plaintext: text, key }),
+        body: JSON.stringify({ plaintext: text, key1: Number(key1), key2: Number(key2) }),
     });
 
     if (!response.ok) {
@@ -20,13 +20,13 @@ async function Encryption(text: string, key: string) {
     return response.json();
 }
 
-async function Decryption(text: string, key: string) {
-    const response = await fetch(API_URL + "/multiplicative/decrypt", {
+async function Decryption(text: string, key1: string, key2: string) {
+    const response = await fetch(API_URL + "/affine/decrypt", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ciphertext: text, key }),
+        body: JSON.stringify({ ciphertext: text, key1: Number(key1), key2: Number(key2) }),
     });
     return response.json();
 }
@@ -54,18 +54,19 @@ function CipherBox({
     fn,
 }: {
     type: "encrypt" | "decrypt",
-    fn: (text: string, key: string) => Promise<any>;
+    fn: any;
 }) {
     const { toast } = useToast();
     const [text, setText] = useState("");
-    const [key, setKey] = useState("");
+    const [key1, setKey1] = useState(""); // key1 for multiplicative
+    const [key2, setKey2] = useState(""); // key2 for additive
 
     const [output, setOutput] = useState("");
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         try {
-            const response = await fn(text, key);
+            const response = await fn(text, key1, key2);
             console.log(response);
             if (response.ciphertext) {
                 setOutput(response.ciphertext);
@@ -89,9 +90,16 @@ function CipherBox({
             <input
                 type="text"
                 className="w-96 h-10 border border-gray-300 p-2"
-                value={key}
-                placeholder="secret key"
-                onChange={(e) => setKey(e.target.value)}
+                value={key1}
+                placeholder="Enter key1"
+                onChange={(e) => setKey1(e.target.value)}
+            />
+            <input type="text"
+                className="w-96 h-10 border border-gray-300 p-2"
+                value={key2}
+                placeholder="Enter key2"
+                onChange={(e) => setKey2(e.target.value)}
+
             />
             <textarea
                 className="w-96 h-48 border border-gray-300 p-2"
