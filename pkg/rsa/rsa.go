@@ -2,12 +2,12 @@ package rsa
 
 import (
 	"crypto/rand"
-	"fmt"
 	"math/big"
 )
 
+// https://en.wikipedia.org/wiki/Fermat_number (Fermat number)
+
 func Enctrypt() {
-	// do something
 
 }
 
@@ -31,16 +31,47 @@ func Decrypt() {
 	- e is usually 3, 5, 17 or 65537
 4. Calculate d such that d * e mod phi(n) = 1
 	- d is the private exponent
+	- d is the modular multiplicative inverse of e modulo phi(n)
+5. Public key is (n, e)
+6. Private key is (n, d)
+7. Encrypt message m using public key: c = m^e mod n
+8. Decrypt message c using private key: m = c^d mod n
 
 */
 
-// GeneratePrimeNumber generates a prime number of bits length
-func GeneratePrimeNumber(bits int) (n *big.Int) {
-	n, err := rand.Prime(rand.Reader, bits/2)
+// GeneratePrimeNumber generates a prime number with given bits
+func generatePrime(bits int) *big.Int {
+	// generate a random number of given bits
+	randomNumber, err := rand.Prime(rand.Reader, bits)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
+	}
+	return randomNumber
+}
+
+// Genrates a public and private key pair with given bits
+// bits: bit-length of the key
+// returns n (modulus), e (public exponent), d (private exponent)
+func GenerateKeyPair(bits int) (n *big.Int, public *big.Int, private *big.Int) {
+	// generate two prime numbers each of half the bit-length
+	p := generatePrime(bits / 2)
+	q := generatePrime(bits / 2)
+	n = new(big.Int).Mul(p, q)
+	// calculate phi_n
+	phi_n := new(big.Int).Mul(new(big.Int).Sub(p, big.NewInt(1)), new(big.Int).Sub(q, big.NewInt(1)))
+
+	// choose e
+	eList := []int{3, 5, 17, 65537}
+	e := big.NewInt(int64(eList[3]))
+	for i := 0; i < len(eList); i++ {
+		if new(big.Int).GCD(nil, nil, e, phi_n).Cmp(big.NewInt(1)) == 0 {
+			break
+		}
+		e = big.NewInt(int64(eList[i]))
 	}
 
-	return n
+	// calculate d
+	d := new(big.Int).ModInverse(e, phi_n)
+
+	return n, e, d
 }
