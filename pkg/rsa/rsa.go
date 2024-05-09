@@ -7,12 +7,25 @@ import (
 
 // https://en.wikipedia.org/wiki/Fermat_number (Fermat number)
 
-func Enctrypt() {
+func Enctrypt(n *big.Int, e *big.Int, message string) string {
+	// convert message to big.Int
+	m := new(big.Int)
+	m.SetBytes([]byte(message))
 
+	// encrypt message
+	c := new(big.Int).Exp(m, e, n) // c = m^e mod n
+
+	return c.String()
 }
 
-func Decrypt() {
-	// do something
+func Decrypt(n *big.Int, d *big.Int, ciphertext string) string {
+	// convert ciphertext to big.Int
+	c := new(big.Int)
+	c.SetString(ciphertext, 10)
+	// decrypt message
+	m := new(big.Int).Exp(c, d, n) // m = c^d mod n
+
+	return string(m.Bytes())
 }
 
 /**

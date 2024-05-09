@@ -47,7 +47,7 @@ func Routes() *chi.Mux {
 
 	rsaHandler := handler.RsaCipherHandler{}
 	r.Route("/rsa", func(r chi.Router) {
-		r.Post("/generate-key", rsaHandler.GenerateKeyHandler)
+		r.Post("/keygen", rsaHandler.GenerateKeyHandler)
 		r.Post("/encrypt", rsaHandler.EncryptHandler)
 		r.Post("/decrypt", rsaHandler.DecryptHandler)
 	})
