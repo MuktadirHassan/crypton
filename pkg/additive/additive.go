@@ -17,6 +17,12 @@ func Encrypt(plaintext string, key int) string {
 
 func Decrypt(ciphertext string, key int) string {
 	var result string
+	if key < 0 {
+		key = 26 + key
+	}
+	if key > 26 {
+		key = key % 26
+	}
 	for _, c := range ciphertext {
 		if c >= 'a' && c <= 'z' {
 			result += string((c-'a'-rune(key)+26)%26 + 'a') // +26 to handle negative values
