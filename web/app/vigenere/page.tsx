@@ -5,7 +5,7 @@ import { API_URL } from "@/config/consts";
 import { useState } from "react";
 
 async function Encryption(text: string, key: string) {
-    const response = await fetch(API_URL + "/multiplicative/encrypt", {
+    const response = await fetch(API_URL + "/vigenere/encrypt", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -21,7 +21,7 @@ async function Encryption(text: string, key: string) {
 }
 
 async function Decryption(text: string, key: string) {
-    const response = await fetch(API_URL + "/multiplicative/decrypt", {
+    const response = await fetch(API_URL + "/vigenere/decrypt", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

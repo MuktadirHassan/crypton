@@ -1,14 +1,72 @@
 package handler
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/MuktadirHassan/crypton/pkg/vigenere"
+)
 
 // VigenereCipherHandler is a struct that defines the Vigenere cipher handler.
 type VigenereCipherHandler struct{}
 
 func (v VigenereCipherHandler) EncryptHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Encrypt"))
+	var reqBody struct {
+		Key       string `json:"key"`
+		Plaintext string `json:"plaintext"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+
+	}
+
+	key := reqBody.Key
+	encryptedText := vigenere.Encrypt(reqBody.Plaintext, key)
+
+	var resBody struct {
+		EncryptedText string `json:"ciphertext"`
+	}
+
+	resBody.EncryptedText = encryptedText
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(resBody)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func (v VigenereCipherHandler) DecryptHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Decrypt"))
+	var reqBody struct {
+		Key        string `json:"key"`
+		Ciphertext string `json:"ciphertext"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&reqBody)
+
+	if err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	key := reqBody.Key
+	decryptedText := vigenere.Decrypt(reqBody.Ciphertext, key)
+
+	var resBody struct {
+		DecryptedText string `json:"plaintext"`
+	}
+
+	resBody.DecryptedText = decryptedText
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(resBody)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

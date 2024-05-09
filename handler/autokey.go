@@ -54,7 +54,7 @@ func (a AutokeyCipherHandler) DecryptHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	key, _ := strconv.Atoi(reqBody.Key)
+	key, err := strconv.Atoi(reqBody.Key)
 	decryptedText := autokey.Decrypt(reqBody.Ciphertext, key)
 
 	var resBody struct {
