@@ -1,40 +1,45 @@
 package autokey
 
-func Encrypt(plaintext string, key string) string {
+func Encrypt(plaintext string, key int) string {
 	var result string
-	keyIndex := 0
-	for _, c := range plaintext {
-		if c >= 'a' && c <= 'z' {
-			result += string((c-'a'+rune(key[keyIndex]-'a'))%26 + 'a')
-		} else if c >= 'A' && c <= 'Z' {
-			result += string((c-'A'+rune(key[keyIndex]-'A'))%26 + 'A')
+	key = key % 26
+
+	for _, char := range plaintext {
+		if char >= 'a' && char <= 'z' {
+			plainChar := int(char) - 'a'
+			encryptedChar := (plainChar + key) % 26
+			result += string(encryptedChar + 'a')
+			key = plainChar
+		} else if char >= 'A' && char <= 'Z' {
+			encryptedChar := (int(char) - 'A' + key) % 26
+			result += string(encryptedChar + 'A')
+			key = int(char) - 'A'
 		} else {
-			result += string(c)
-		}
-		keyIndex++
-		if keyIndex == len(key) {
-			keyIndex = 0
+			result += string(char)
 		}
 	}
 
 	return result
+
 }
 
-func Decrypt(ciphertext string, key string) string {
+func Decrypt(ciphertext string, key int) string {
 	var result string
-	keyIndex := 0
-	for _, c := range ciphertext {
-		if c >= 'a' && c <= 'z' {
-			result += string((c-'a'-rune(key[keyIndex]-'a')+26)%26 + 'a') // +26 to handle negative values
-		} else if c >= 'A' && c <= 'Z' {
-			result += string((c-'A'-rune(key[keyIndex]-'A')+26)%26 + 'A')
+	key = key % 26
+
+	for _, char := range ciphertext {
+		if char >= 'a' && char <= 'z' {
+			decryptedChar := (int(char) - 'a' - key + 26) % 26
+			result += string(decryptedChar + 'a')
+			key = decryptedChar
+		} else if char >= 'A' && char <= 'Z' {
+			decryptedChar := (int(char) - 'A' - key + 26) % 26
+			result += string(decryptedChar + 'A')
+			key = decryptedChar
 		} else {
-			result += string(c)
-		}
-		keyIndex++
-		if keyIndex == len(key) {
-			keyIndex = 0
+			result += string(char)
 		}
 	}
+
 	return result
 }
