@@ -4,9 +4,9 @@ func Encrypt(plaintext string, key int) string {
 	var result string
 	for _, c := range plaintext {
 		if c >= 'a' && c <= 'z' {
-			result += string((c-'a'+rune(key))%26 + 'a')
+			result += string((c-'a')*rune(key)%26 + 'a')
 		} else if c >= 'A' && c <= 'Z' {
-			result += string((c-'A'+rune(key))%26 + 'A')
+			result += string((c-'A')*rune(key)%26 + 'A')
 		} else {
 			result += string(c)
 		}
@@ -24,25 +24,28 @@ func Decrypt(ciphertext string, key int) string {
 		key = 26 + key%26
 	}
 
-	if gcd := gcd(key, 26); gcd != 1 {
-		return "Invalid . Key must be coprime with 26. Coprimes: 1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25"
+	// Find the multiplicative inverse of key
+	var inverse int
+	for i := 0; i < 26; i++ {
+		if (key*i)%26 == 1 {
+			inverse = i
+			break
+		}
+	}
+
+	if inverse == 0 {
+		return "Key is not coprime with 26"
 	}
 
 	for _, c := range ciphertext {
 		if c >= 'a' && c <= 'z' {
-			result += string((c-'a'-rune(key)+26)%26 + 'a') // +26 to handle negative values
+			result += string((c-'a')*rune(inverse)%26 + 'a')
 		} else if c >= 'A' && c <= 'Z' {
-			result += string((c-'A'-rune(key)+26)%26 + 'A')
+			result += string((c-'A')*rune(inverse)%26 + 'A')
 		} else {
 			result += string(c)
 		}
+
 	}
 	return result
-}
-
-func gcd(a, b int) int {
-	for b != 0 {
-		a, b = b, a%b
-	}
-	return a
 }
